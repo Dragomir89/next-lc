@@ -1,0 +1,23 @@
+{
+  "name": "nextjs-course",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.14.11",
+    "@mui/styled-engine-sc": "^5.14.11",
+    "fs": "^0.0.1-security",
+    "mongodb": "^6.1.0",
+    "mongoose": "^7.5.3",
+    "next": "^13.0.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "styled-components": "^5.3.11"
+  }
+}
