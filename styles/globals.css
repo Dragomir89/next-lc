@@ -20,3 +20,6 @@ h6 {
 main {
   padding-top: 60px;
 } 
+.MuiInputBase-root > input {
+  width: 226px;
+ }

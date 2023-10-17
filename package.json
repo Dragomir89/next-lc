@@ -8,10 +8,14 @@
     "start": "next start"
   },
   "dependencies": {
+    "@auth0/nextjs-auth0": "^3.1.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@mui/joy": "^5.0.0-beta.9",
     "@mui/material": "^5.14.11",
     "@mui/styled-engine-sc": "^5.14.11",
+    "@mui/x-date-pickers": "^6.16.2",
+    "dayjs": "^1.11.10",
     "fs": "^0.0.1-security",
     "mongodb": "^6.1.0",
     "mongoose": "^7.5.3",

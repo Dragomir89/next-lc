@@ -8,7 +8,7 @@ import {
 
 async function handler(req, res) {
   if (req.method !== "POST") {
-    res.status(200).json({ message: "You must use POST method" });
+    res.status(400).json({ message: "You must use POST method" });
     return;
   }
 
@@ -36,11 +36,13 @@ async function handler(req, res) {
         res.status(201).json(neighborhood);
         break;
       default:
-        res.status(200).json({ message: "невалиден рекуест" });
+        res.status(400).json({ errorMessage: "невалиден рекуест" });
     }
   } catch (error) {
     console.log(" --- HAS SOME ERROR");
+    console.log(error.code);
     console.log(error);
+    res.status(400).json({ errorMessage: "Тази стойност вече съществува" });
   }
 }
 

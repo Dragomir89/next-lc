@@ -3,15 +3,15 @@ const { Schema } = mongoose;
 const ObjectId = mongoose.Schema.ObjectId;
 
 const constrTypeSchema = new Schema({
-  value: { type: String },
+  value: { type: String, unique: true },
 });
 
 const propertyTypeSchema = new Schema({
-  value: { type: String },
+  value: { type: String, unique: true },
 });
 
 const neighborhoodSchema = new Schema({
-  value: { type: String },
+  value: { type: String, unique: true },
 });
 
 const OfferPhoneIdsSchema = new Schema({
@@ -26,11 +26,11 @@ const phoneSchema = new Schema({
 });
 
 const stateSchema = new Schema({
-  value: { type: String },
+  value: { type: String, unique: true },
 });
 
 const offerSchema = new Schema({
-  number: { type: Number, required: "Offer Number is required" },
+  // number: { type: Number, required: "Offer Number is required" },
   area: Number,
   description: String,
   phoneNumber: String,
@@ -39,7 +39,6 @@ const offerSchema = new Schema({
   address: String,
   info: String,
   propertyOwnerName: {
-    type: String,
     type: String,
     lowercase: true,
     trim: true,
@@ -54,7 +53,7 @@ const offerSchema = new Schema({
   state: { type: ObjectId, required: true, ref: "states" },
   neighborhoodId: { type: ObjectId, required: true, ref: "neighborhoods" },
   addedOn: { type: Date },
-  addedFrom: { type: ObjectId, ref: "users" },
+  // addedFrom: { type: ObjectId, ref: "users" },
   lastCall: { type: Date },
   nextCall: { type: Date },
   isDeleted: { type: Boolean, default: false },

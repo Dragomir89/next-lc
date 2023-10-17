@@ -1,14 +1,9 @@
 import TextField from "@mui/material/TextField";
 import { Button } from "@mui/material";
 import { useState } from "react";
+import { postRequest } from "../../utils/requests";
 
-function AddOptionInput({
-  handleClick,
-  btnText,
-  label,
-  existingOptions,
-  optionType,
-}) {
+function AddOptionInput({ btnText, label, optionType }) {
   const [inputVal, setInputVal] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const onchangeInput = (event) => {
@@ -16,22 +11,18 @@ function AddOptionInput({
   };
 
   const onClickBtn = () => {
-    for (let i = 0; i < existingOptions.length; i++) {
-      if (
-        existingOptions[i].value.trim().toLocaleLowerCase() ===
-        inputVal.trim().toLocaleLowerCase()
-      ) {
-        setErrorMsg("Тази иопция вече съществува");
-        return;
-      }
-    }
     const newOption = {
       optionType,
       value: inputVal,
     };
-    setErrorMsg("");
-    handleClick(newOption);
-    setInputVal("");
+    postRequest("/api/post-add-option", newOption).then((data) => {
+      if (data.errorMessage) {
+        setErrorMsg(data.errorMessage);
+      } else {
+        setErrorMsg("");
+        setInputVal("");
+      }
+    });
   };
 
   return (
