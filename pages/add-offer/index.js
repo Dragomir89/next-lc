@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Button, TextField } from "@mui/material";
 import Textarea from "@mui/joy/Textarea";
-import AutocompleteDropdown from "../../components/common/AutocompleteDropdown";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import { postRequest } from "../../utils/requests";
+import { getRequest, postRequest } from "../../utils/requests";
+import { addLabelToDropdownFields } from "../../utils/functions";
+import DropdownFields from "../../components/common/DropdownFields";
 
 function AddOfferPage({ options }) {
   const [constructionType, setConstructionTypes] = useState(null);
@@ -185,67 +186,30 @@ function AddOfferPage({ options }) {
       nextCall,
     })
       .then((res) => {
-        console.log(res);
+        resetForm();
       })
-      .catch((e) => {
-        // resetForm();
-      });
+      .catch((e) => {});
   };
 
   return (
     <div style={{ width: "1170px", margin: "0 auto" }}>
       <h1 style={{ textAlign: "center" }}>Добави оферта</h1>
-      <div style={{ display: "flex", marginBottom: "25px" }}>
-        <div style={{ padding: fieldPadding }}>
-          <AutocompleteDropdown
-            error={hasErrorConstructionType}
-            id="constructionType"
-            onChange={onChangeAutocomplete}
-            value={constructionType}
-            label="Вид строителство *"
-            options={constructionTypes.map((e) => {
-              return e.label;
-            })}
-          />
-        </div>
-        <div style={{ padding: fieldPadding }}>
-          <AutocompleteDropdown
-            error={hasErrorPropertyType}
-            id="propertyType"
-            label="Вид имот *"
-            options={propertyTypes.map((e) => {
-              return e.label;
-            })}
-            value={propertyType}
-            onChange={onChangeAutocomplete}
-          />
-        </div>
-        <div style={{ padding: fieldPadding }}>
-          <AutocompleteDropdown
-            error={hasErrorState}
-            id="state"
-            label="Състояние *"
-            options={states.map((e) => {
-              return e.label;
-            })}
-            onChange={onChangeAutocomplete}
-            value={state}
-          />
-        </div>
-        <div style={{ padding: fieldPadding }}>
-          <AutocompleteDropdown
-            error={hasErrorNeighborhood}
-            id="neighborhood"
-            neighborhood="neighborhood"
-            label="Квартал *"
-            options={neighborhoods.map((e) => {
-              return e.label;
-            })}
-            onChange={onChangeAutocomplete}
-            value={neighborhood}
-          />
-        </div>
-      </div>
+      <DropdownFields
+        hasErrorConstructionType={hasErrorConstructionType}
+        onChangeAutocomplete={onChangeAutocomplete}
+        constructionType={constructionType}
+        constructionTypes={constructionTypes}
+        hasErrorPropertyType={hasErrorPropertyType}
+        propertyTypes={propertyTypes}
+        propertyType={propertyType}
+        hasErrorState={hasErrorState}
+        states={states}
+        state={state}
+        hasErrorNeighborhood={hasErrorNeighborhood}
+        neighborhoods={neighborhoods}
+        neighborhood={neighborhood}
+      />
+
       <div style={{ display: "flex" }}>
         <div>
           <div style={{ padding: fieldPadding, width: "300px" }}>
@@ -306,7 +270,7 @@ function AddOfferPage({ options }) {
               type="number"
               style={{ marginBottom: "5px" }}
               id="price"
-              label={"Цена - лв"}
+              label={"\u20AC Цена"}
               fullWidth
               value={price}
               onChange={onChangeInput}
@@ -418,30 +382,10 @@ function AddOfferPage({ options }) {
 }
 
 export default AddOfferPage;
-/// това да се промени !
 export async function getStaticProps(context) {
-  const result = await fetch(process.env.BASE_URL + "/api/get-all-opitions", {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  });
-  let options = await result.json();
+  let options = await getRequest("/api/get-all-opitions");
 
-  options.constructionTypes = options.constructionTypes.map((o) => {
-    o.label = o.value;
-    return o;
-  });
-  options.neighborhoods = options.neighborhoods.map((o) => {
-    o.label = o.value;
-    return o;
-  });
-  options.propertyTypes = options.propertyTypes.map((o) => {
-    o.label = o.value;
-    return o;
-  });
-  options.states = options.states.map((o) => {
-    o.label = o.value;
-    return o;
-  });
+  options = addLabelToDropdownFields(options);
 
   return {
     props: {

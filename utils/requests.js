@@ -5,3 +5,10 @@ export function postRequest(path, object) {
     headers: { "Content-Type": "application/json" },
   }).then((res) => res.json());
 }
+
+export function getRequest(path) {
+  return fetch(`${process.env.BASE_URL}${path}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  }).then((res) => res.json());
+}

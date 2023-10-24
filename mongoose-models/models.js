@@ -73,7 +73,7 @@ const OfferPhoneIds =
   mongoose.models.offerPhoneIds ||
   mongoose.model("offerPhoneIds", OfferPhoneIdsSchema);
 
-const Phone =
+const PhoneNumbers =
   mongoose.models.phoneNumbers || mongoose.model("phoneNumbers", phoneSchema);
 const State = mongoose.models.states || mongoose.model("states", stateSchema);
 const Offer = mongoose.models.offers || mongoose.model("offers", offerSchema);
@@ -83,7 +83,7 @@ export {
   PropertyTypes,
   Neighborhood,
   OfferPhoneIds,
-  Phone,
+  PhoneNumbers,
   State,
   Offer,
 };

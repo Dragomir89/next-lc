@@ -1,6 +1,5 @@
 import AddOptionInput from "../../components/add-options-components/AddOptionInput";
 
-//// да се направи на статична страница !!!
 function AddOptions(props) {
   return (
     <div>
