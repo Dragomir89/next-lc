@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Button } from "@mui/material";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 import dayjs from "dayjs";
 import { getRequest, postRequest } from "../../utils/requests";
 import {
@@ -35,6 +37,8 @@ function AddOfferPage({ options }) {
   const [nextCall, setNextCall] = useState(dayjs(new Date()));
 
   const { constructionTypes, neighborhoods, propertyTypes, states } = options;
+
+  const [open, setOpen] = useState(false);
 
   const onChangeAutocomplete = (e, values) => {
     if (!e) {
@@ -134,6 +138,7 @@ function AddOfferPage({ options }) {
     ) {
       return;
     }
+    setOpen(true);
 
     const dropdownsIds = getIdsByLabels(
       constructionTypes,
@@ -151,7 +156,7 @@ function AddOfferPage({ options }) {
       constructionTypeId: dropdownsIds.constructionTypeId,
       neighborhoodId: dropdownsIds.neighborhoodId,
       propertyTypeId: dropdownsIds.propertyTypeId,
-      state: dropdownsIds.state,
+      state: dropdownsIds.stateId,
       phoneNumber,
       phoneNumber2,
       phoneNumber3,
@@ -166,13 +171,22 @@ function AddOfferPage({ options }) {
       nextCall,
     })
       .then((res) => {
+        setOpen(false);
         resetForm();
       })
-      .catch((e) => {});
+      .catch((e) => {
+        setOpen(false);
+      });
   };
 
   return (
     <div style={{ width: "1170px", margin: "0 auto" }}>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <h1 style={{ textAlign: "center" }}>Добави оферта</h1>
       <OfferFields
         info={info}

@@ -42,7 +42,7 @@ async function handler(req, res) {
     console.log(" --- HAS SOME ERROR");
     console.log(error.code);
     console.log(error);
-    res.status(400).json({ errorMessage: "Тази стойност вече съществува" });
+    res.status(400).json({ errorMessage: "Невалидна стойност", error });
   }
 }
 

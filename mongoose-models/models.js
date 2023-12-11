@@ -3,15 +3,15 @@ const { Schema } = mongoose;
 const ObjectId = mongoose.Schema.ObjectId;
 
 const constrTypeSchema = new Schema({
-  value: { type: String, unique: true },
+  value: { type: String, unique: true, minlength: 2 },
 });
 
 const propertyTypeSchema = new Schema({
-  value: { type: String, unique: true },
+  value: { type: String, unique: true, minlength: 2 },
 });
 
 const neighborhoodSchema = new Schema({
-  value: { type: String, unique: true },
+  value: { type: String, unique: true, minlength: 2 },
 });
 
 const OfferPhoneIdsSchema = new Schema({
@@ -26,7 +26,7 @@ const phoneSchema = new Schema({
 });
 
 const stateSchema = new Schema({
-  value: { type: String, unique: true },
+  value: { type: String, unique: true, minlength: 2 },
 });
 
 const offerSchema = new Schema({

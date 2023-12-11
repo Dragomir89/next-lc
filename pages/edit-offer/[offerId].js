@@ -1,4 +1,6 @@
 import { useState } from "react";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 import dayjs from "dayjs";
 import {
   addLabelToDropdownFields,
@@ -27,6 +29,7 @@ function ShowOffers({ offer, options }) {
   const stateLabel = states.find((e) => {
     return e._id === offer.state;
   }).label;
+  const [open, setOpen] = useState(false);
 
   const [constructionType, setConstructionTypes] = useState(
     constructionTypeLabel
@@ -160,13 +163,24 @@ function ShowOffers({ offer, options }) {
       lastCall,
       nextCall,
     };
-    postRequest("/api/edit-offer", updatedOffer).then((res) => {
-      console.log(res);
-    });
+    setOpen(true);
+    postRequest("/api/edit-offer", updatedOffer)
+      .then((res) => {
+        setOpen(false);
+      })
+      .catch((error) => {
+        setOpen(false);
+      });
   };
 
   return (
     <div style={{ width: "1170px", margin: "0 auto" }}>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <h1 style={{ textAlign: "center" }}>Редактиране на оферта</h1>
       <OfferFields
         info={info}

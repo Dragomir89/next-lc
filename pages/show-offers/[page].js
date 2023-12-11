@@ -6,6 +6,8 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -23,10 +25,17 @@ const SearchButton = styled(Button)({
   height: "55px",
   width: "240px",
 });
+
 function ShowOffers(props) {
   const { push } = useRouter();
 
+  const [open, setOpen] = useState(false);
+
   const { offers, count, query, options } = props;
+
+  useEffect(() => {
+    setOpen(false);
+  }, [offers]);
 
   const { constructionTypes, neighborhoods, propertyTypes, states } = options;
 
@@ -112,11 +121,13 @@ function ShowOffers(props) {
   }
 
   const handleChangePage = (event, newPage) => {
+    setOpen(true);
     setPage(newPage);
     redirectOffersPage(++newPage, rowsPerPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
+    setOpen(true);
     const rowsPerPage = event.target.value;
     setRowsPerPage(rowsPerPage);
     setPage(0);
@@ -150,12 +161,19 @@ function ShowOffers(props) {
       phoneNumber,
       nextCall: new Date(nextCall?.$d).toISOString(),
     };
+    setOpen(true);
     console.log(searchObj);
   };
 
   const fieldPadding = "5px";
   return (
     <div style={{ marginTop: "30px" }}>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <div style={{ width: "1440px", overflow: "hidden", margin: "0 auto" }}>
         <div style={{ display: "flex" }}>
           <DropdownFields
@@ -228,6 +246,7 @@ function ShowOffers(props) {
                   <TableRow
                     style={{ cursor: "pointer" }}
                     onClick={() => {
+                      setOpen(true);
                       push(`/edit-offer/${row.id}`);
                     }}
                     hover
