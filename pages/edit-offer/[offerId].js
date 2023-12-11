@@ -1,19 +1,39 @@
 import { useState } from "react";
-import { Button } from "@mui/material";
 import dayjs from "dayjs";
-import { getRequest, postRequest } from "../../utils/requests";
 import {
   addLabelToDropdownFields,
   getIdsByLabels,
   validateDropdowns,
 } from "../../utils/functions";
+import { getRequest, postRequest } from "../../utils/requests";
 import OfferFields from "../../components/common/OfferFields";
+import { Button } from "@mui/material";
 
-function AddOfferPage({ options }) {
-  const [constructionType, setConstructionTypes] = useState(null);
-  const [propertyType, setPropertyType] = useState(null);
-  const [state, setStates] = useState(null);
-  const [neighborhood, setNeighborhoods] = useState(null);
+function ShowOffers({ offer, options }) {
+  const { constructionTypes, neighborhoods, propertyTypes, states } = options;
+
+  const constructionTypeLabel = constructionTypes.find((e) => {
+    return e._id === offer.constructionTypeId;
+  }).label;
+
+  const neighborhoodLabel = neighborhoods.find((e) => {
+    return e._id === offer.neighborhoodId;
+  }).label;
+
+  const propertyTypesLabel = propertyTypes.find((e) => {
+    return e._id === offer.propertyTypeId;
+  }).label;
+
+  const stateLabel = states.find((e) => {
+    return e._id === offer.state;
+  }).label;
+
+  const [constructionType, setConstructionTypes] = useState(
+    constructionTypeLabel
+  );
+  const [propertyType, setPropertyType] = useState(propertyTypesLabel);
+  const [state, setStates] = useState(stateLabel);
+  const [neighborhood, setNeighborhoods] = useState(neighborhoodLabel);
 
   const [hasErrorConstructionType, setHasErrorConstructionType] =
     useState(false);
@@ -21,20 +41,20 @@ function AddOfferPage({ options }) {
   const [hasErrorState, setHasErrorState] = useState(false);
   const [hasErrorNeighborhood, setHasErrorNeighborhood] = useState(false);
 
-  const [phoneNumber, setphoneNumber] = useState("");
-  const [phoneNumber2, setPhoneNumber2] = useState("");
-  const [phoneNumber3, setPhoneNumber3] = useState("");
-  const [address, setAddress] = useState("");
-  const [area, setArea] = useState("");
-  const [price, setPrice] = useState("");
-  const [floor, setFloor] = useState("");
-  const [propertyOwnerName, setPropertyOwnerName] = useState("");
-  const [description, setDescription] = useState("");
-  const [info, setInfo] = useState("");
-  const [lastCall, setLastCall] = useState(dayjs(new Date()));
-  const [nextCall, setNextCall] = useState(dayjs(new Date()));
-
-  const { constructionTypes, neighborhoods, propertyTypes, states } = options;
+  const [phoneNumber, setphoneNumber] = useState(offer.phoneNumbers[0]);
+  const [phoneNumber2, setPhoneNumber2] = useState(offer.phoneNumbers[1]);
+  const [phoneNumber3, setPhoneNumber3] = useState(offer.phoneNumbers[2]);
+  const [address, setAddress] = useState(offer.address);
+  const [area, setArea] = useState(offer.area);
+  const [price, setPrice] = useState(offer.price);
+  const [floor, setFloor] = useState(offer.floor);
+  const [propertyOwnerName, setPropertyOwnerName] = useState(
+    offer.propertyOwnerName
+  );
+  const [description, setDescription] = useState(offer.description);
+  const [info, setInfo] = useState(offer.info);
+  const [lastCall, setLastCall] = useState(dayjs(new Date(offer.lastCall)));
+  const [nextCall, setNextCall] = useState(dayjs(new Date(offer.nextCall)));
 
   const onChangeAutocomplete = (e, values) => {
     if (!e) {
@@ -95,31 +115,7 @@ function AddOfferPage({ options }) {
     }
   };
 
-  const resetForm = () => {
-    setHasErrorConstructionType(false);
-    setHasErrorPropertyType(false);
-    setHasErrorState(false);
-    setHasErrorNeighborhood(false);
-
-    setConstructionTypes(null);
-    setPropertyType(null);
-    setStates(null);
-    setNeighborhoods(null);
-    setphoneNumber("");
-    setPhoneNumber2("");
-    setPhoneNumber3("");
-    setAddress("");
-    setArea("");
-    setPrice("");
-    setFloor("");
-    setPropertyOwnerName("");
-    setDescription("");
-    setInfo("");
-    setLastCall(dayjs(new Date()));
-    setNextCall(dayjs(new Date()));
-  };
-
-  const submitNewOffer = () => {
+  const updateOffer = () => {
     if (
       validateDropdowns(
         constructionType,
@@ -145,9 +141,8 @@ function AddOfferPage({ options }) {
       states,
       state
     );
-
-    postRequest("/api/offer", {
-      addedOn: new Date().toISOString(),
+    const updatedOffer = {
+      _id: offer._id,
       constructionTypeId: dropdownsIds.constructionTypeId,
       neighborhoodId: dropdownsIds.neighborhoodId,
       propertyTypeId: dropdownsIds.propertyTypeId,
@@ -164,16 +159,15 @@ function AddOfferPage({ options }) {
       info,
       lastCall,
       nextCall,
-    })
-      .then((res) => {
-        resetForm();
-      })
-      .catch((e) => {});
+    };
+    postRequest("/api/edit-offer", updatedOffer).then((res) => {
+      console.log(res);
+    });
   };
 
   return (
     <div style={{ width: "1170px", margin: "0 auto" }}>
-      <h1 style={{ textAlign: "center" }}>Добави оферта</h1>
+      <h1 style={{ textAlign: "center" }}>Редактиране на оферта</h1>
       <OfferFields
         info={info}
         propertyOwnerName={propertyOwnerName}
@@ -206,31 +200,27 @@ function AddOfferPage({ options }) {
       />
       <div style={{ padding: "5px" }}>
         <Button
-          onClick={submitNewOffer}
+          onClick={updateOffer}
           style={{ width: "290px" }}
           variant="contained"
-          color="success"
+          color="warning"
         >
-          Запази
+          Редактирай
         </Button>
       </div>
     </div>
   );
 }
 
-export default AddOfferPage;
+export async function getServerSideProps(context) {
+  const { params, req, res, query } = context;
 
-// getStaticProps страницата се генерира при билдване на проекта и
-// се връща на клиента готова
-export async function getStaticProps(context) {
+  const { offerId } = params;
+  const offer = await getRequest(`/api/get-offer/${offerId}`);
   let options = await getRequest("/api/get-all-opitions");
-
   options = addLabelToDropdownFields(options);
 
-  return {
-    props: {
-      options,
-    },
-    revalidate: 60, /// през 60 секунди се обновява с нова информация ако има такава
-  };
+  return { props: { offer, options } };
 }
+
+export default ShowOffers;
