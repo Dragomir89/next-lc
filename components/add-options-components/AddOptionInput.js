@@ -4,12 +4,18 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useState } from "react";
 import { postRequest } from "../../utils/requests";
+import CustomAlert from "../common/CustomAlert";
 
 function AddOptionInput({ btnText, label, optionType }) {
   const [inputVal, setInputVal] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [open, setOpen] = useState(false);
-
+  const initialAlertData = {
+    severity: "success",
+    message: "Успешно добавяне",
+    show: false,
+  };
+  const [alertData, setAlertData] = useState(initialAlertData);
   const onchangeInput = (event) => {
     setInputVal(event.target.value);
   };
@@ -22,9 +28,22 @@ function AddOptionInput({ btnText, label, optionType }) {
     };
     postRequest("/api/post-add-option", newOption).then((data) => {
       if (data.errorMessage) {
+        const alertData = {
+          severity: "error",
+          message: "Възникна Грешка",
+          show: true,
+        };
+        setAlertData(alertData);
         setOpen(false);
         setErrorMsg(data.errorMessage);
       } else {
+        const alertData = {
+          severity: "success",
+          message: "Успешно добавяне",
+          show: true,
+        };
+
+        setAlertData(alertData);
         setOpen(false);
         setErrorMsg("");
         setInputVal("");
@@ -40,6 +59,7 @@ function AddOptionInput({ btnText, label, optionType }) {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
+      <CustomAlert {...alertData} setAlertData={setAlertData} />
       <TextField
         style={{ marginBottom: "5px" }}
         error={!!errorMsg}

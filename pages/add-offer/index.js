@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Button } from "@mui/material";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+// import Snackbar from "@mui/material/Snackbar";
+// import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import dayjs from "dayjs";
 import { getRequest, postRequest } from "../../utils/requests";
 import {
@@ -10,6 +12,7 @@ import {
   validateDropdowns,
 } from "../../utils/functions";
 import OfferFields from "../../components/common/OfferFields";
+import CustomAlert from "../../components/common/CustomAlert";
 
 function AddOfferPage({ options }) {
   const [constructionType, setConstructionTypes] = useState(null);
@@ -39,6 +42,12 @@ function AddOfferPage({ options }) {
   const { constructionTypes, neighborhoods, propertyTypes, states } = options;
 
   const [open, setOpen] = useState(false);
+  const initialAlertData = {
+    severity: "success",
+    message: "Успешно добавяне",
+    show: false,
+  };
+  const [alertData, setAlertData] = useState(initialAlertData);
 
   const onChangeAutocomplete = (e, values) => {
     if (!e) {
@@ -172,10 +181,20 @@ function AddOfferPage({ options }) {
     })
       .then((res) => {
         setOpen(false);
+        setAlertData({
+          severity: "success",
+          message: "Успешно добавихте оферта",
+          show: true,
+        });
         resetForm();
       })
       .catch((e) => {
         setOpen(false);
+        setAlertData({
+          severity: "error",
+          message: "Възникна грешка",
+          show: true,
+        });
       });
   };
 
@@ -187,6 +206,8 @@ function AddOfferPage({ options }) {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
+      <CustomAlert {...alertData} setAlertData={setAlertData} />
+
       <h1 style={{ textAlign: "center" }}>Добави оферта</h1>
       <OfferFields
         info={info}

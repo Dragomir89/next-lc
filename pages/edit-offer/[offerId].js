@@ -10,6 +10,7 @@ import {
 import { getRequest, postRequest } from "../../utils/requests";
 import OfferFields from "../../components/common/OfferFields";
 import { Button } from "@mui/material";
+import CustomAlert from "../../components/common/CustomAlert";
 
 function ShowOffers({ offer, options }) {
   const { constructionTypes, neighborhoods, propertyTypes, states } = options;
@@ -58,6 +59,14 @@ function ShowOffers({ offer, options }) {
   const [info, setInfo] = useState(offer.info);
   const [lastCall, setLastCall] = useState(dayjs(new Date(offer.lastCall)));
   const [nextCall, setNextCall] = useState(dayjs(new Date(offer.nextCall)));
+
+  const initialAlertData = {
+    severity: "warning",
+    message: "Промените бяха запазени",
+    show: false,
+  };
+
+  const [alertData, setAlertData] = useState(initialAlertData);
 
   const onChangeAutocomplete = (e, values) => {
     if (!e) {
@@ -166,9 +175,21 @@ function ShowOffers({ offer, options }) {
     setOpen(true);
     postRequest("/api/edit-offer", updatedOffer)
       .then((res) => {
+        const alertData = {
+          severity: "warning",
+          message: "Промените бяха запазени",
+          show: true,
+        };
+        setAlertData(alertData);
         setOpen(false);
       })
       .catch((error) => {
+        const alertData = {
+          severity: "error",
+          message: "Възникна грешка",
+          show: true,
+        };
+        setAlertData(alertData);
         setOpen(false);
       });
   };
@@ -181,6 +202,7 @@ function ShowOffers({ offer, options }) {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
+      <CustomAlert {...alertData} setAlertData={setAlertData} />
       <h1 style={{ textAlign: "center" }}>Редактиране на оферта</h1>
       <OfferFields
         info={info}
