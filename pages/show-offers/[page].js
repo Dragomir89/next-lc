@@ -13,6 +13,7 @@ import { getRequest } from "../../utils/requests";
 import {
   addLabelToDropdownFields,
   fomatOffersTableData,
+  getIdsByLabels,
 } from "../../utils/functions";
 import { Button, TablePagination, TextField } from "@mui/material";
 import DropdownFields from "../../components/common/DropdownFields";
@@ -24,7 +25,7 @@ const SearchButton = styled(Button)({
 });
 function ShowOffers(props) {
   const { push } = useRouter();
-  console.log(props);
+
   const { offers, count, query, options } = props;
 
   const { constructionTypes, neighborhoods, propertyTypes, states } = options;
@@ -35,8 +36,7 @@ function ShowOffers(props) {
   const [neighborhood, setNeighborhoods] = useState(null);
 
   const [phoneNumber, setphoneNumber] = useState("");
-  // const [nextCall, setNextCall] = useState(dayjs(new Date()));
-  const [nextCall, setNextCall] = useState(null);
+  const [nextCall, setNextCall] = useState(dayjs(new Date()));
 
   const onChangeAutocomplete = (e, values) => {
     if (!e) {
@@ -129,6 +129,30 @@ function ShowOffers(props) {
     setphoneNumber(value);
   };
 
+  const handleClickSearch = () => {
+    const { constructionTypeId, neighborhoodId, propertyTypeId, stateId } =
+      getIdsByLabels(
+        constructionTypes,
+        constructionType,
+        neighborhoods,
+        neighborhood,
+        propertyTypes,
+        propertyType,
+        states,
+        state
+      );
+
+    const searchObj = {
+      constructionTypeId,
+      neighborhoodId,
+      propertyTypeId,
+      stateId,
+      phoneNumber,
+      nextCall: new Date(nextCall?.$d).toISOString(),
+    };
+    console.log(searchObj);
+  };
+
   const fieldPadding = "5px";
   return (
     <div style={{ marginTop: "30px" }}>
@@ -146,7 +170,11 @@ function ShowOffers(props) {
             neighborhood={neighborhood}
           />
           <div style={{ marginTop: "5px" }}>
-            <SearchButton variant="contained" size="large">
+            <SearchButton
+              variant="contained"
+              size="large"
+              onClick={handleClickSearch}
+            >
               ТЪРСИ
             </SearchButton>
           </div>
@@ -199,6 +227,9 @@ function ShowOffers(props) {
                 return (
                   <TableRow
                     style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      push(`/edit-offer/${row.id}`);
+                    }}
                     hover
                     role="checkbox"
                     tabIndex={-1}
