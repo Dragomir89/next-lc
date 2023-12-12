@@ -1,6 +1,4 @@
 import { useState } from "react";
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
 import dayjs from "dayjs";
 import {
   addLabelToDropdownFields,
@@ -11,9 +9,13 @@ import { getRequest, postRequest } from "../../utils/requests";
 import OfferFields from "../../components/common/OfferFields";
 import { Button } from "@mui/material";
 import CustomAlert from "../../components/common/CustomAlert";
+import { CircularProgressContext } from "../../context/CircularProgressContext";
 
 function ShowOffers({ offer, options }) {
   const { constructionTypes, neighborhoods, propertyTypes, states } = options;
+  const { showProgressAction, hideProgressAction } = useContext(
+    CircularProgressContext
+  );
 
   const constructionTypeLabel = constructionTypes.find((e) => {
     return e._id === offer.constructionTypeId;
@@ -30,7 +32,6 @@ function ShowOffers({ offer, options }) {
   const stateLabel = states.find((e) => {
     return e._id === offer.state;
   }).label;
-  const [open, setOpen] = useState(false);
 
   const [constructionType, setConstructionTypes] = useState(
     constructionTypeLabel
@@ -172,7 +173,7 @@ function ShowOffers({ offer, options }) {
       lastCall,
       nextCall,
     };
-    setOpen(true);
+    showProgressAction();
     postRequest("/api/edit-offer", updatedOffer)
       .then((res) => {
         const alertData = {
@@ -181,7 +182,7 @@ function ShowOffers({ offer, options }) {
           show: true,
         };
         setAlertData(alertData);
-        setOpen(false);
+        hideProgressAction();
       })
       .catch((error) => {
         const alertData = {
@@ -190,18 +191,12 @@ function ShowOffers({ offer, options }) {
           show: true,
         };
         setAlertData(alertData);
-        setOpen(false);
+        hideProgressAction();
       });
   };
 
   return (
     <div style={{ width: "1170px", margin: "0 auto" }}>
-      <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={open}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
       <CustomAlert {...alertData} setAlertData={setAlertData} />
       <h1 style={{ textAlign: "center" }}>Редактиране на оферта</h1>
       <OfferFields

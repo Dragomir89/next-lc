@@ -1,12 +1,15 @@
 import { Fragment } from "react";
 import MainHeader from "./main-header";
+import { CircularProgressProvider } from "../context/CircularProgressContext";
 // import classes from "./layout-module.css";
 
 function Layout(props) {
   return (
     <Fragment>
       <MainHeader />
-      <main>{props.children}</main>
+      <main>
+        <CircularProgressProvider>{props.children}</CircularProgressProvider>
+      </main>
     </Fragment>
   );
 }

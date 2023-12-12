@@ -1,9 +1,5 @@
-import { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button } from "@mui/material";
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
-// import Snackbar from "@mui/material/Snackbar";
-// import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import dayjs from "dayjs";
 import { getRequest, postRequest } from "../../utils/requests";
 import {
@@ -13,19 +9,18 @@ import {
 } from "../../utils/functions";
 import OfferFields from "../../components/common/OfferFields";
 import CustomAlert from "../../components/common/CustomAlert";
+import { CircularProgressContext } from "../../context/CircularProgressContext";
 
 function AddOfferPage({ options }) {
   const [constructionType, setConstructionTypes] = useState(null);
   const [propertyType, setPropertyType] = useState(null);
   const [state, setStates] = useState(null);
   const [neighborhood, setNeighborhoods] = useState(null);
-
   const [hasErrorConstructionType, setHasErrorConstructionType] =
     useState(false);
   const [hasErrorPropertyType, setHasErrorPropertyType] = useState(false);
   const [hasErrorState, setHasErrorState] = useState(false);
   const [hasErrorNeighborhood, setHasErrorNeighborhood] = useState(false);
-
   const [phoneNumber, setphoneNumber] = useState("");
   const [phoneNumber2, setPhoneNumber2] = useState("");
   const [phoneNumber3, setPhoneNumber3] = useState("");
@@ -38,10 +33,11 @@ function AddOfferPage({ options }) {
   const [info, setInfo] = useState("");
   const [lastCall, setLastCall] = useState(dayjs(new Date()));
   const [nextCall, setNextCall] = useState(dayjs(new Date()));
-
   const { constructionTypes, neighborhoods, propertyTypes, states } = options;
+  const { showProgressAction, hideProgressAction } = useContext(
+    CircularProgressContext
+  );
 
-  const [open, setOpen] = useState(false);
   const initialAlertData = {
     severity: "success",
     message: "Успешно добавяне",
@@ -147,7 +143,7 @@ function AddOfferPage({ options }) {
     ) {
       return;
     }
-    setOpen(true);
+    showProgressAction();
 
     const dropdownsIds = getIdsByLabels(
       constructionTypes,
@@ -180,7 +176,7 @@ function AddOfferPage({ options }) {
       nextCall,
     })
       .then((res) => {
-        setOpen(false);
+        hideProgressAction();
         setAlertData({
           severity: "success",
           message: "Успешно добавихте оферта",
@@ -189,7 +185,7 @@ function AddOfferPage({ options }) {
         resetForm();
       })
       .catch((e) => {
-        setOpen(false);
+        hideProgressAction();
         setAlertData({
           severity: "error",
           message: "Възникна грешка",
@@ -200,12 +196,6 @@ function AddOfferPage({ options }) {
 
   return (
     <div style={{ width: "1170px", margin: "0 auto" }}>
-      <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={open}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
       <CustomAlert {...alertData} setAlertData={setAlertData} />
 
       <h1 style={{ textAlign: "center" }}>Добави оферта</h1>

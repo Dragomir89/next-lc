@@ -1,15 +1,19 @@
+"use client";
+import React, { useContext } from "react";
 import TextField from "@mui/material/TextField";
 import { Button } from "@mui/material";
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
 import { useState } from "react";
 import { postRequest } from "../../utils/requests";
 import CustomAlert from "../common/CustomAlert";
+import { CircularProgressContext } from "../../context/CircularProgressContext";
 
 function AddOptionInput({ btnText, label, optionType }) {
+  const { showProgressAction, hideProgressAction } = useContext(
+    CircularProgressContext
+  );
   const [inputVal, setInputVal] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-  const [open, setOpen] = useState(false);
+
   const initialAlertData = {
     severity: "success",
     message: "Успешно добавяне",
@@ -21,7 +25,7 @@ function AddOptionInput({ btnText, label, optionType }) {
   };
 
   const onClickBtn = () => {
-    setOpen(true);
+    showProgressAction();
     const newOption = {
       optionType,
       value: inputVal,
@@ -34,7 +38,7 @@ function AddOptionInput({ btnText, label, optionType }) {
           show: true,
         };
         setAlertData(alertData);
-        setOpen(false);
+        hideProgressAction();
         setErrorMsg(data.errorMessage);
       } else {
         const alertData = {
@@ -44,7 +48,7 @@ function AddOptionInput({ btnText, label, optionType }) {
         };
 
         setAlertData(alertData);
-        setOpen(false);
+        hideProgressAction();
         setErrorMsg("");
         setInputVal("");
       }
@@ -53,12 +57,6 @@ function AddOptionInput({ btnText, label, optionType }) {
 
   return (
     <div style={{ padding: "10px" }}>
-      <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={open}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
       <CustomAlert {...alertData} setAlertData={setAlertData} />
       <TextField
         style={{ marginBottom: "5px" }}

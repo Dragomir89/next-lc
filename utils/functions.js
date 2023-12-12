@@ -94,3 +94,31 @@ export function validateDropdowns(
   }
   return hasError;
 }
+
+export function createQueryStr(
+  constructionTypes,
+  constructionType,
+  neighborhoods,
+  neighborhood,
+  propertyTypes,
+  propertyType,
+  states,
+  state,
+  page,
+  rowsPerPage
+) {
+  const { constructionTypeId, neighborhoodId, propertyTypeId, stateId } =
+    getIdsByLabels(
+      constructionTypes,
+      constructionType,
+      neighborhoods,
+      neighborhood,
+      propertyTypes,
+      propertyType,
+      states,
+      state
+    );
+  const res = `/show-offers/${page}?rows=${rowsPerPage}&constructionTypeId=${constructionTypeId}&neighborhoodId=${neighborhoodId}&propertyTypeId=${propertyTypeId}&state=${stateId}`;
+  console.log(res);
+  return res;
+}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useRouter } from "next/navigation";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -6,8 +6,6 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -15,34 +13,33 @@ import { getRequest } from "../../utils/requests";
 import {
   addLabelToDropdownFields,
   fomatOffersTableData,
-  getIdsByLabels,
+  createQueryStr,
 } from "../../utils/functions";
-import { Button, TablePagination, TextField } from "@mui/material";
+import { TablePagination, TextField } from "@mui/material";
 import DropdownFields from "../../components/common/DropdownFields";
 import { DatePicker } from "@mui/x-date-pickers";
-import { styled } from "@mui/material/styles";
-const SearchButton = styled(Button)({
-  height: "55px",
-  width: "240px",
-});
+import SerchButton from "../../components/common/SerchButton";
+import { CircularProgressContext } from "../../context/CircularProgressContext";
 
 function ShowOffers(props) {
-  const { push } = useRouter();
+  const { showProgressAction, hideProgressAction } = useContext(
+    CircularProgressContext
+  );
 
-  const [open, setOpen] = useState(false);
+  const { push } = useRouter();
 
   const { offers, count, query, options } = props;
 
   useEffect(() => {
-    setOpen(false);
+    hideProgressAction();
   }, [offers]);
 
   const { constructionTypes, neighborhoods, propertyTypes, states } = options;
 
-  const [constructionType, setConstructionTypes] = useState(null);
-  const [propertyType, setPropertyType] = useState(null);
-  const [state, setStates] = useState(null);
-  const [neighborhood, setNeighborhoods] = useState(null);
+  const [constructionType, setConstructionTypes] = useState("");
+  const [propertyType, setPropertyType] = useState("");
+  const [state, setStates] = useState("");
+  const [neighborhood, setNeighborhoods] = useState("");
 
   const [phoneNumber, setphoneNumber] = useState("");
   const [nextCall, setNextCall] = useState(dayjs(new Date()));
@@ -117,17 +114,48 @@ function ShowOffers(props) {
   ];
 
   function redirectOffersPage(page, rowsPerPage) {
+    console.clear();
+    // const { constructionTypeId, neighborhoodId, propertyTypeId, stateId } =
+    //   getIdsByLabels(
+    //     constructionTypes,
+    //     constructionType,
+    //     neighborhoods,
+    //     neighborhood,
+    //     propertyTypes,
+    //     propertyType,
+    //     states,
+    //     state
+    //   );
+
+    // console.log(
+    //   `/show-offers/${page}?rows=${rowsPerPage}&constructionTypeId=${constructionTypeId}&neighborhoodId=${neighborhoodId}&propertyTypeId=${propertyTypeId}&state=${stateId}`
+    // );
+    createQueryStr(
+      constructionTypes,
+      constructionType,
+      neighborhoods,
+      neighborhood,
+      propertyTypes,
+      propertyType,
+      states,
+      state,
+      page,
+      rowsPerPage
+    );
+    // push(
+    //   `/show-offers/${page}?rows=${rowsPerPage}&constructionTypeId=${constructionTypeId}&neighborhoodId=${neighborhoodId}&propertyTypeId=${propertyTypeId}&state=${stateId}`
+    // );
     push(`/show-offers/${page}?rows=${rowsPerPage}`);
   }
 
   const handleChangePage = (event, newPage) => {
-    setOpen(true);
+    showProgressAction();
     setPage(newPage);
     redirectOffersPage(++newPage, rowsPerPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setOpen(true);
+    showProgressAction();
     const rowsPerPage = event.target.value;
     setRowsPerPage(rowsPerPage);
     setPage(0);
@@ -141,39 +169,30 @@ function ShowOffers(props) {
   };
 
   const handleClickSearch = () => {
-    const { constructionTypeId, neighborhoodId, propertyTypeId, stateId } =
-      getIdsByLabels(
-        constructionTypes,
-        constructionType,
-        neighborhoods,
-        neighborhood,
-        propertyTypes,
-        propertyType,
-        states,
-        state
-      );
+    console.clear();
 
-    const searchObj = {
-      constructionTypeId,
-      neighborhoodId,
-      propertyTypeId,
-      stateId,
-      phoneNumber,
-      nextCall: new Date(nextCall?.$d).toISOString(),
-    };
-    setOpen(true);
-    console.log(searchObj);
+    const queryStr = createQueryStr(
+      constructionTypes,
+      constructionType,
+      neighborhoods,
+      neighborhood,
+      propertyTypes,
+      propertyType,
+      states,
+      state,
+      page,
+      rowsPerPage
+    );
+    console.log("here 1 ");
+    setTimeout(() => {
+      console.log("here 2 ");
+      hideProgressAction();
+    }, 2000);
   };
 
   const fieldPadding = "5px";
   return (
     <div style={{ marginTop: "30px" }}>
-      <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={open}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
       <div style={{ width: "1440px", overflow: "hidden", margin: "0 auto" }}>
         <div style={{ display: "flex" }}>
           <DropdownFields
@@ -187,15 +206,7 @@ function ShowOffers(props) {
             neighborhoods={neighborhoods}
             neighborhood={neighborhood}
           />
-          <div style={{ marginTop: "5px" }}>
-            <SearchButton
-              variant="contained"
-              size="large"
-              onClick={handleClickSearch}
-            >
-              ТЪРСИ
-            </SearchButton>
-          </div>
+          <SerchButton handleClickSearch={handleClickSearch} />
         </div>
 
         <div style={{ display: "flex" }}>
@@ -246,7 +257,7 @@ function ShowOffers(props) {
                   <TableRow
                     style={{ cursor: "pointer" }}
                     onClick={() => {
-                      setOpen(true);
+                      showProgressAction();
                       push(`/edit-offer/${row.id}`);
                     }}
                     hover
