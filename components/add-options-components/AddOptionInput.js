@@ -6,11 +6,14 @@ import { useState } from "react";
 import { postRequest } from "../../utils/requests";
 import CustomAlert from "../common/CustomAlert";
 import { CircularProgressContext } from "../../context/CircularProgressContext";
+import { AlertContext } from "../../context/AlertContext";
 
 function AddOptionInput({ btnText, label, optionType }) {
   const { showProgressAction, hideProgressAction } = useContext(
     CircularProgressContext
   );
+  const { addedAction, showErrorAction } = useContext(AlertContext);
+
   const [inputVal, setInputVal] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -19,7 +22,6 @@ function AddOptionInput({ btnText, label, optionType }) {
     message: "Успешно добавяне",
     show: false,
   };
-  const [alertData, setAlertData] = useState(initialAlertData);
   const onchangeInput = (event) => {
     setInputVal(event.target.value);
   };
@@ -32,32 +34,19 @@ function AddOptionInput({ btnText, label, optionType }) {
     };
     postRequest("/api/post-add-option", newOption).then((data) => {
       if (data.errorMessage) {
-        const alertData = {
-          severity: "error",
-          message: "Възникна Грешка",
-          show: true,
-        };
-        setAlertData(alertData);
-        hideProgressAction();
+        showErrorAction();
         setErrorMsg(data.errorMessage);
       } else {
-        const alertData = {
-          severity: "success",
-          message: "Успешно добавяне",
-          show: true,
-        };
-
-        setAlertData(alertData);
-        hideProgressAction();
+        addedAction();
         setErrorMsg("");
         setInputVal("");
       }
+      hideProgressAction();
     });
   };
 
   return (
     <div style={{ padding: "10px" }}>
-      <CustomAlert {...alertData} setAlertData={setAlertData} />
       <TextField
         style={{ marginBottom: "5px" }}
         error={!!errorMsg}

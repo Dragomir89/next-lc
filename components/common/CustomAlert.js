@@ -1,23 +1,29 @@
+"use client";
+
+import React, { useContext, useState } from "react";
 import Snackbar from "@mui/material/Snackbar";
 
 import Alert from "@mui/material/Alert";
-const CustomAlert = ({ show, severity, message, setAlertData }) => {
+import { AlertContext } from "../../context/AlertContext";
+const CustomAlert = () => {
+  const { alertData, hideAlertAction } = useContext(AlertContext);
+
   return (
     <Snackbar
-      open={show}
+      open={alertData.show}
       autoHideDuration={5000}
       onClose={() => {
-        setAlertData({ show: false });
+        hideAlertAction();
       }}
     >
       <Alert
         onClose={() => {
-          setAlertData({ show: false });
+          hideAlertAction();
         }}
-        severity={severity}
+        severity={alertData.severity}
         sx={{ width: "100%" }}
       >
-        {message}
+        {alertData.message}
       </Alert>
     </Snackbar>
   );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useContext, useState } from "react";
 import dayjs from "dayjs";
 import {
   addLabelToDropdownFields,
@@ -8,7 +8,7 @@ import {
 import { getRequest, postRequest } from "../../utils/requests";
 import OfferFields from "../../components/common/OfferFields";
 import { Button } from "@mui/material";
-import CustomAlert from "../../components/common/CustomAlert";
+import { AlertContext } from "../../context/AlertContext";
 import { CircularProgressContext } from "../../context/CircularProgressContext";
 
 function ShowOffers({ offer, options }) {
@@ -16,6 +16,7 @@ function ShowOffers({ offer, options }) {
   const { showProgressAction, hideProgressAction } = useContext(
     CircularProgressContext
   );
+  const { savedChangesAction, showErrorAction } = useContext(AlertContext);
 
   const constructionTypeLabel = constructionTypes.find((e) => {
     return e._id === offer.constructionTypeId;
@@ -60,14 +61,6 @@ function ShowOffers({ offer, options }) {
   const [info, setInfo] = useState(offer.info);
   const [lastCall, setLastCall] = useState(dayjs(new Date(offer.lastCall)));
   const [nextCall, setNextCall] = useState(dayjs(new Date(offer.nextCall)));
-
-  const initialAlertData = {
-    severity: "warning",
-    message: "Промените бяха запазени",
-    show: false,
-  };
-
-  const [alertData, setAlertData] = useState(initialAlertData);
 
   const onChangeAutocomplete = (e, values) => {
     if (!e) {
@@ -176,28 +169,17 @@ function ShowOffers({ offer, options }) {
     showProgressAction();
     postRequest("/api/edit-offer", updatedOffer)
       .then((res) => {
-        const alertData = {
-          severity: "warning",
-          message: "Промените бяха запазени",
-          show: true,
-        };
-        setAlertData(alertData);
+        savedChangesAction();
         hideProgressAction();
       })
       .catch((error) => {
-        const alertData = {
-          severity: "error",
-          message: "Възникна грешка",
-          show: true,
-        };
-        setAlertData(alertData);
+        showErrorAction();
         hideProgressAction();
       });
   };
 
   return (
     <div style={{ width: "1170px", margin: "0 auto" }}>
-      <CustomAlert {...alertData} setAlertData={setAlertData} />
       <h1 style={{ textAlign: "center" }}>Редактиране на оферта</h1>
       <OfferFields
         info={info}

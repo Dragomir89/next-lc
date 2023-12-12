@@ -8,8 +8,8 @@ import {
   validateDropdowns,
 } from "../../utils/functions";
 import OfferFields from "../../components/common/OfferFields";
-import CustomAlert from "../../components/common/CustomAlert";
 import { CircularProgressContext } from "../../context/CircularProgressContext";
+import { AlertContext } from "../../context/AlertContext";
 
 function AddOfferPage({ options }) {
   const [constructionType, setConstructionTypes] = useState(null);
@@ -38,12 +38,7 @@ function AddOfferPage({ options }) {
     CircularProgressContext
   );
 
-  const initialAlertData = {
-    severity: "success",
-    message: "Успешно добавяне",
-    show: false,
-  };
-  const [alertData, setAlertData] = useState(initialAlertData);
+  const { addedOfferAction, showErrorAction } = useContext(AlertContext);
 
   const onChangeAutocomplete = (e, values) => {
     if (!e) {
@@ -177,27 +172,17 @@ function AddOfferPage({ options }) {
     })
       .then((res) => {
         hideProgressAction();
-        setAlertData({
-          severity: "success",
-          message: "Успешно добавихте оферта",
-          show: true,
-        });
+        addedOfferAction();
         resetForm();
       })
       .catch((e) => {
         hideProgressAction();
-        setAlertData({
-          severity: "error",
-          message: "Възникна грешка",
-          show: true,
-        });
+        showErrorAction();
       });
   };
 
   return (
     <div style={{ width: "1170px", margin: "0 auto" }}>
-      <CustomAlert {...alertData} setAlertData={setAlertData} />
-
       <h1 style={{ textAlign: "center" }}>Добави оферта</h1>
       <OfferFields
         info={info}
