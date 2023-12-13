@@ -165,8 +165,6 @@ const OfferFields = ({
               minRows={5}
               onChange={(e) => {
                 e.target.id = "info";
-                console.log(e.target.class);
-                console.log(e.target.value);
                 onChangeInput(e);
               }}
               placeholder="Допълнително описание"
