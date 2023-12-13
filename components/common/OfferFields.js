@@ -40,7 +40,7 @@ const OfferFields = ({
   const fieldPadding = "5px";
   return (
     <>
-      {/* <DropdownFields
+      <DropdownFields
         hasErrorConstructionType={hasErrorConstructionType}
         onChangeAutocomplete={onChangeAutocomplete}
         broker={broker}
@@ -56,7 +56,7 @@ const OfferFields = ({
         hasErrorNeighborhood={hasErrorNeighborhood}
         neighborhoods={neighborhoods}
         neighborhood={neighborhood}
-      /> */}
+      />
 
       <div style={{ display: "flex" }}>
         <div>
