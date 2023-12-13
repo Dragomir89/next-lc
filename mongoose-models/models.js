@@ -29,6 +29,10 @@ const stateSchema = new Schema({
   value: { type: String, unique: true, minlength: 2 },
 });
 
+const brokerSchema = new Schema({
+  value: { type: String, unique: true, minlength: 2 },
+});
+
 const offerSchema = new Schema({
   // number: { type: Number, required: "Offer Number is required" },
   area: Number,
@@ -58,6 +62,7 @@ const offerSchema = new Schema({
   nextCall: { type: Date },
   isDeleted: { type: Boolean, default: false },
   deletedOn: { type: Date, default: null },
+  brokerId: { type: ObjectId, ref: "broker" },
 });
 
 const ConstructionType =
@@ -69,6 +74,7 @@ const PropertyTypes =
 const Neighborhood =
   mongoose.models.neighborhoods ||
   mongoose.model("neighborhoods", neighborhoodSchema);
+const Broker = mongoose.models.broker || mongoose.model("broker", brokerSchema);
 const OfferPhoneIds =
   mongoose.models.offerPhoneIds ||
   mongoose.model("offerPhoneIds", OfferPhoneIdsSchema);
@@ -85,6 +91,7 @@ export {
   OfferPhoneIds,
   PhoneNumbers,
   State,
+  Broker,
   Offer,
 };
 

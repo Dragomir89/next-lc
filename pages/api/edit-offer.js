@@ -17,6 +17,7 @@ async function handler(req, res) {
 
     const {
       area,
+      brokerId,
       phoneNumber,
       addedOn,
       description,
@@ -36,6 +37,7 @@ async function handler(req, res) {
       { _id },
       {
         area,
+        brokerId,
         phoneNumber,
         phoneNumbers,
         addedOn,

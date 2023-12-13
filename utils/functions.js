@@ -12,22 +12,13 @@ export function fomatOffersTableData(incommingOffer) {
 }
 
 export function addLabelToDropdownFields(options) {
-  options.constructionTypes = options.constructionTypes.map((o) => {
-    o.label = o.value;
-    return o;
-  });
-  options.neighborhoods = options.neighborhoods.map((o) => {
-    o.label = o.value;
-    return o;
-  });
-  options.propertyTypes = options.propertyTypes.map((o) => {
-    o.label = o.value;
-    return o;
-  });
-  options.states = options.states.map((o) => {
-    o.label = o.value;
-    return o;
-  });
+  for (var key in options) {
+    options[key] = options[key].map((o) => {
+      o.label = o.value;
+      return o;
+    });
+  }
+
   return options;
 }
 
@@ -39,7 +30,9 @@ export function getIdsByLabels(
   propertyTypes,
   propertyType,
   states,
-  state
+  state,
+  brokers,
+  broker
 ) {
   const constructionTypeId = constructionTypes.find((e) => {
     return e.label === constructionType;
@@ -56,6 +49,20 @@ export function getIdsByLabels(
   const stateId = states.find((e) => {
     return e.label === state;
   })?._id;
+
+  if (broker) {
+    const brokerId = brokers.find((e) => {
+      return e.label === broker;
+    })?._id;
+
+    return {
+      constructionTypeId,
+      neighborhoodId,
+      propertyTypeId,
+      stateId,
+      brokerId,
+    };
+  }
 
   return {
     constructionTypeId,
@@ -104,21 +111,111 @@ export function createQueryStr(
   propertyType,
   states,
   state,
-  page,
-  rowsPerPage
+  rowsPerPage,
+  brokers,
+  broker,
+  phoneNumber
 ) {
-  const { constructionTypeId, neighborhoodId, propertyTypeId, stateId } =
-    getIdsByLabels(
-      constructionTypes,
-      constructionType,
-      neighborhoods,
-      neighborhood,
-      propertyTypes,
-      propertyType,
-      states,
-      state
-    );
-  const res = `/show-offers/${page}?rows=${rowsPerPage}&constructionTypeId=${constructionTypeId}&neighborhoodId=${neighborhoodId}&propertyTypeId=${propertyTypeId}&state=${stateId}`;
+  const {
+    constructionTypeId,
+    neighborhoodId,
+    propertyTypeId,
+    stateId,
+    brokerId,
+  } = getIdsByLabels(
+    constructionTypes,
+    constructionType,
+    neighborhoods,
+    neighborhood,
+    propertyTypes,
+    propertyType,
+    states,
+    state,
+    brokers,
+    broker
+  );
+  const res = `?rows=${rowsPerPage || ""}&constructionTypeId=${
+    constructionTypeId || ""
+  }&neighborhoodId=${neighborhoodId || ""}&propertyTypeId=${
+    propertyTypeId || ""
+  }&state=${stateId || ""}&brokerId=${brokerId || ""}&phoneNumber=${
+    phoneNumber || ""
+  }`;
   console.log(res);
   return res;
 }
+
+export const onChangeAutocomplete = (
+  e,
+  values,
+  setConstructionTypes,
+  setPropertyType,
+  setStates,
+  setNeighborhoods,
+  setBroker
+) => {
+  if (!e) {
+    return;
+  }
+  const id = e.target.id.split("-")[0];
+  switch (id) {
+    case "constructionType":
+      setConstructionTypes(values);
+      break;
+    case "propertyType":
+      setPropertyType(values);
+      break;
+    case "state":
+      setStates(values);
+      break;
+    case "neighborhood":
+      setNeighborhoods(values);
+      break;
+    case "broker":
+      setBroker(values);
+      break;
+  }
+};
+
+export const creteFindOfferQuery = (query) => {
+  const findObj = {};
+  for (const [key, value] of Object.entries(query)) {
+    if (value && key !== "page" && key !== "rows") {
+      findObj[key] = value;
+    }
+  }
+  return findObj;
+};
+
+// const onChangeInput = (e) => { //// move here
+
+export const getSelectetLabels = (options, query) => {
+  console.log(" getSelectetLabels - query ", query);
+
+  const constructionTypeObj = options.constructionTypes.find((el) => {
+    return el._id === query.constructionTypeId;
+  });
+  const propertyTypeObj = options.propertyTypes.find((el) => {
+    return el._id === query.propertyTypeId;
+  });
+  const neighborhoodsObJ = options.neighborhoods.find((el) => {
+    return el._id === query.neighborhoodId;
+  });
+  const stateObj = options.states.find((el) => {
+    return el._id === query.state;
+  });
+  const brokerObj = options.brokers.find((el) => {
+    return el._id === query.brokerId;
+  });
+
+  const selectedValues = {
+    constructionType: constructionTypeObj ? constructionTypeObj.label : null,
+    propertyType: propertyTypeObj ? propertyTypeObj.label : null,
+    neighborhood: neighborhoodsObJ ? neighborhoodsObJ.label : null,
+    state: stateObj ? stateObj.label : null,
+    broker: brokerObj ? brokerObj.label : null,
+    phoneNumber: query.phoneNumber ? query.phoneNumber : "",
+  };
+
+  return selectedValues;
+};

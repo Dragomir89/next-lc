@@ -4,6 +4,7 @@ import {
   PropertyTypes,
   Neighborhood,
   State,
+  Broker,
 } from "../../mongoose-models/models";
 
 async function handler(req, res) {
@@ -34,6 +35,10 @@ async function handler(req, res) {
       case "neighborhoods":
         const neighborhood = await Neighborhood.create(newOption);
         res.status(201).json(neighborhood);
+        break;
+      case "broker":
+        const broker = await Broker.create(newOption);
+        res.status(201).json(broker);
         break;
       default:
         res.status(400).json({ errorMessage: "невалиден рекуест" });

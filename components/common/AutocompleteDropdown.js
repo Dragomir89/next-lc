@@ -7,7 +7,7 @@ function AutocompleteDropdown({ label, options, onChange, value, id, error }) {
       id={id}
       value={value}
       onInputChange={onChange}
-      style={{ width: "290px" }}
+      style={{ width: "230px" }}
       disablePortal
       options={options}
       sx={{ width: 290 }}

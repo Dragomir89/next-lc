@@ -14,6 +14,8 @@ import {
   addLabelToDropdownFields,
   fomatOffersTableData,
   createQueryStr,
+  onChangeAutocomplete,
+  getSelectetLabels,
 } from "../../utils/functions";
 import { TablePagination, TextField } from "@mui/material";
 import DropdownFields from "../../components/common/DropdownFields";
@@ -28,47 +30,33 @@ function ShowOffers(props) {
 
   const { push } = useRouter();
 
-  const { offers, count, query, options } = props;
+  const { offers, count, query, options, selectedLabels } = props;
+  console.log("selectedLabels = ", selectedLabels);
 
-  useEffect(() => {
-    hideProgressAction();
-  }, [offers]);
+  const { constructionTypes, neighborhoods, propertyTypes, states, brokers } =
+    options;
 
-  const { constructionTypes, neighborhoods, propertyTypes, states } = options;
+  const [constructionType, setConstructionTypes] = useState(
+    selectedLabels.constructionType
+  );
+  const [propertyType, setPropertyType] = useState(selectedLabels.propertyType);
+  const [state, setStates] = useState(selectedLabels.state);
+  const [neighborhood, setNeighborhoods] = useState(
+    selectedLabels.neighborhood
+  );
+  const [broker, setBroker] = useState(selectedLabels.broker);
 
-  const [constructionType, setConstructionTypes] = useState("");
-  const [propertyType, setPropertyType] = useState("");
-  const [state, setStates] = useState("");
-  const [neighborhood, setNeighborhoods] = useState("");
-
-  const [phoneNumber, setphoneNumber] = useState("");
+  const [phoneNumber, setphoneNumber] = useState(selectedLabels.phoneNumber);
   const [nextCall, setNextCall] = useState(dayjs(new Date()));
-
-  const onChangeAutocomplete = (e, values) => {
-    if (!e) {
-      return;
-    }
-    const id = e.target.id.split("-")[0];
-    switch (id) {
-      case "constructionType":
-        setConstructionTypes(values);
-        break;
-      case "propertyType":
-        setPropertyType(values);
-        break;
-      case "state":
-        setStates(values);
-        break;
-      case "neighborhood":
-        setNeighborhoods(values);
-        break;
-    }
-  };
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(
     query.rows ? Number(query.rows) : 10
   );
+
+  useEffect(() => {
+    hideProgressAction();
+  }, [offers]);
 
   const columns = [
     { id: "propertyType", label: "Вид Имот", minWidth: 70 },
@@ -114,23 +102,7 @@ function ShowOffers(props) {
   ];
 
   function redirectOffersPage(page, rowsPerPage) {
-    console.clear();
-    // const { constructionTypeId, neighborhoodId, propertyTypeId, stateId } =
-    //   getIdsByLabels(
-    //     constructionTypes,
-    //     constructionType,
-    //     neighborhoods,
-    //     neighborhood,
-    //     propertyTypes,
-    //     propertyType,
-    //     states,
-    //     state
-    //   );
-
-    // console.log(
-    //   `/show-offers/${page}?rows=${rowsPerPage}&constructionTypeId=${constructionTypeId}&neighborhoodId=${neighborhoodId}&propertyTypeId=${propertyTypeId}&state=${stateId}`
-    // );
-    createQueryStr(
+    const query = createQueryStr(
       constructionTypes,
       constructionType,
       neighborhoods,
@@ -139,13 +111,9 @@ function ShowOffers(props) {
       propertyType,
       states,
       state,
-      page,
       rowsPerPage
     );
-    // push(
-    //   `/show-offers/${page}?rows=${rowsPerPage}&constructionTypeId=${constructionTypeId}&neighborhoodId=${neighborhoodId}&propertyTypeId=${propertyTypeId}&state=${stateId}`
-    // );
-    push(`/show-offers/${page}?rows=${rowsPerPage}`);
+    push(`/show-offers/${page}${query}`);
   }
 
   const handleChangePage = (event, newPage) => {
@@ -169,9 +137,7 @@ function ShowOffers(props) {
   };
 
   const handleClickSearch = () => {
-    console.clear();
-
-    const queryStr = createQueryStr(
+    const query = createQueryStr(
       constructionTypes,
       constructionType,
       neighborhoods,
@@ -180,14 +146,15 @@ function ShowOffers(props) {
       propertyType,
       states,
       state,
-      page,
-      rowsPerPage
+      rowsPerPage,
+      brokers,
+      broker,
+      phoneNumber
     );
-    console.log("here 1 ");
-    setTimeout(() => {
-      console.log("here 2 ");
-      hideProgressAction();
-    }, 2000);
+
+    setPage(0);
+    push(`/show-offers/${1}${query}`);
+    // hideProgressAction();
   };
 
   const fieldPadding = "5px";
@@ -196,7 +163,19 @@ function ShowOffers(props) {
       <div style={{ width: "1440px", overflow: "hidden", margin: "0 auto" }}>
         <div style={{ display: "flex" }}>
           <DropdownFields
-            onChangeAutocomplete={onChangeAutocomplete}
+            brokers={brokers}
+            broker={broker}
+            onChangeAutocomplete={(e, value) => {
+              onChangeAutocomplete(
+                e,
+                value,
+                setConstructionTypes,
+                setPropertyType,
+                setStates,
+                setNeighborhoods,
+                setBroker
+              );
+            }}
             constructionType={constructionType}
             constructionTypes={constructionTypes}
             propertyTypes={propertyTypes}
@@ -297,15 +276,28 @@ function ShowOffers(props) {
 
 export async function getServerSideProps(context) {
   const { params, req, res, query } = context;
+
+  const propsQuery = `&constructionTypeId=${
+    query.constructionTypeId || ""
+  }&neighborhoodId=${query.neighborhoodId || ""}&propertyTypeId=${
+    query.propertyTypeId || ""
+  }&state=${query.state || ""}&brokerId=${query.brokerId || ""}&phoneNumbers=${
+    query.phoneNumber || ""
+  }`;
+
   function createQuery() {
-    return `?page=${query.page}&rows=${query.rows ? query.rows : 10}`;
+    return `?page=${query.page}&rows=${
+      query.rows ? query.rows : 10
+    }${propsQuery}`;
   }
   const { offers, count } = await getRequest("/api/get-offers" + createQuery());
 
   let options = await getRequest("/api/get-all-opitions");
   options = addLabelToDropdownFields(options);
 
-  return { props: { offers, count, query, options } };
+  const selectedLabels = getSelectetLabels(options, query);
+
+  return { props: { offers, count, query, options, selectedLabels } };
 }
 
 export default ShowOffers;

@@ -12,6 +12,7 @@ import { CircularProgressContext } from "../../context/CircularProgressContext";
 import { AlertContext } from "../../context/AlertContext";
 
 function AddOfferPage({ options }) {
+  const [broker, setBroker] = useState(null);
   const [constructionType, setConstructionTypes] = useState(null);
   const [propertyType, setPropertyType] = useState(null);
   const [state, setStates] = useState(null);
@@ -33,7 +34,8 @@ function AddOfferPage({ options }) {
   const [info, setInfo] = useState("");
   const [lastCall, setLastCall] = useState(dayjs(new Date()));
   const [nextCall, setNextCall] = useState(dayjs(new Date()));
-  const { constructionTypes, neighborhoods, propertyTypes, states } = options;
+  const { constructionTypes, neighborhoods, propertyTypes, states, brokers } =
+    options;
   const { showProgressAction, hideProgressAction } = useContext(
     CircularProgressContext
   );
@@ -57,6 +59,9 @@ function AddOfferPage({ options }) {
         break;
       case "neighborhood":
         setNeighborhoods(values);
+        break;
+      case "broker":
+        setBroker(values);
         break;
     }
   };
@@ -148,7 +153,9 @@ function AddOfferPage({ options }) {
       propertyTypes,
       propertyType,
       states,
-      state
+      state,
+      brokers,
+      broker
     );
 
     postRequest("/api/offer", {
@@ -157,6 +164,7 @@ function AddOfferPage({ options }) {
       neighborhoodId: dropdownsIds.neighborhoodId,
       propertyTypeId: dropdownsIds.propertyTypeId,
       state: dropdownsIds.stateId,
+      brokerId: dropdownsIds.brokerId,
       phoneNumber,
       phoneNumber2,
       phoneNumber3,
@@ -185,6 +193,8 @@ function AddOfferPage({ options }) {
     <div style={{ width: "1170px", margin: "0 auto" }}>
       <h1 style={{ textAlign: "center" }}>Добави оферта</h1>
       <OfferFields
+        broker={broker}
+        brokers={brokers}
         info={info}
         propertyOwnerName={propertyOwnerName}
         hasErrorConstructionType={hasErrorConstructionType}

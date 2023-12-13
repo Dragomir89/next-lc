@@ -25,6 +25,11 @@ function AddOptions(props) {
           label="Квартал"
           btnText="Добави Квартал"
         />
+        <AddOptionInput
+          optionType="broker"
+          label="Брокер"
+          btnText="Добави Брокер"
+        />
       </div>
     </div>
   );

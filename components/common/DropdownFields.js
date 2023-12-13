@@ -1,6 +1,8 @@
 import AutocompleteDropdown from "./AutocompleteDropdown";
 
 const DropdownFields = ({
+  broker,
+  brokers,
   hasErrorConstructionType,
   onChangeAutocomplete,
   constructionType,
@@ -58,13 +60,24 @@ const DropdownFields = ({
         <AutocompleteDropdown
           error={hasErrorNeighborhood}
           id="neighborhood"
-          neighborhood="neighborhood"
           label="Квартал *"
           options={neighborhoods.map((e) => {
             return e.label;
           })}
           onChange={onChangeAutocomplete}
           value={neighborhood}
+        />
+      </div>
+      <div style={{ padding: fieldPadding }}>
+        <AutocompleteDropdown
+          error={hasErrorNeighborhood}
+          id="broker"
+          label="Брокер"
+          options={brokers.map((e) => {
+            return e.label;
+          })}
+          onChange={onChangeAutocomplete}
+          value={broker}
         />
       </div>
     </div>

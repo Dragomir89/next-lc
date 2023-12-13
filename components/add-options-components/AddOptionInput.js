@@ -17,11 +17,6 @@ function AddOptionInput({ btnText, label, optionType }) {
   const [inputVal, setInputVal] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
-  const initialAlertData = {
-    severity: "success",
-    message: "Успешно добавяне",
-    show: false,
-  };
   const onchangeInput = (event) => {
     setInputVal(event.target.value);
   };

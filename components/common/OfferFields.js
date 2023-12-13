@@ -6,6 +6,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import DropdownFields from "../../components/common/DropdownFields";
 
 const OfferFields = ({
+  broker,
+  brokers,
   info,
   propertyOwnerName,
   hasErrorConstructionType,
@@ -41,6 +43,8 @@ const OfferFields = ({
       <DropdownFields
         hasErrorConstructionType={hasErrorConstructionType}
         onChangeAutocomplete={onChangeAutocomplete}
+        broker={broker}
+        brokers={brokers}
         constructionType={constructionType}
         constructionTypes={constructionTypes}
         hasErrorPropertyType={hasErrorPropertyType}

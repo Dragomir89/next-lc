@@ -5,7 +5,7 @@ import React, { createContext, useState } from "react";
 export const AlertContext = createContext();
 
 export const AlertProvider = ({ children }) => {
-  const initialState = { show: false, severity: "", message: "" };
+  const initialState = { show: false, severity: "success", message: "" };
 
   const [alertData, setAlertData] = useState(initialState);
 

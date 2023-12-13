@@ -1,5 +1,6 @@
 import { connectToDB } from "../../utils/database";
-import { Offer, PhoneNumbers } from "../../mongoose-models/models";
+import { Offer } from "../../mongoose-models/models";
+import { creteFindOfferQuery } from "../../utils/functions";
 
 async function handler(req, res) {
   if (req.method !== "GET") {
@@ -18,8 +19,10 @@ async function handler(req, res) {
       return skipVal;
     }
 
-    const count = await Offer.countDocuments({});
-    const offers = await Offer.find({})
+    const findObj = creteFindOfferQuery(req.query);
+
+    const count = await Offer.countDocuments(findObj);
+    const offers = await Offer.find(findObj)
       .skip(calculatePaginationDetails(page, rows))
       .limit(rows)
       .populate("constructionTypeId", "value")

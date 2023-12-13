@@ -1,8 +1,9 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import {
   addLabelToDropdownFields,
   getIdsByLabels,
+  onChangeAutocomplete,
   validateDropdowns,
 } from "../../utils/functions";
 import { getRequest, postRequest } from "../../utils/requests";
@@ -12,11 +13,16 @@ import { AlertContext } from "../../context/AlertContext";
 import { CircularProgressContext } from "../../context/CircularProgressContext";
 
 function ShowOffers({ offer, options }) {
-  const { constructionTypes, neighborhoods, propertyTypes, states } = options;
+  const { constructionTypes, neighborhoods, propertyTypes, states, brokers } =
+    options;
   const { showProgressAction, hideProgressAction } = useContext(
     CircularProgressContext
   );
   const { savedChangesAction, showErrorAction } = useContext(AlertContext);
+
+  useEffect(() => {
+    hideProgressAction();
+  }, []);
 
   const constructionTypeLabel = constructionTypes.find((e) => {
     return e._id === offer.constructionTypeId;
@@ -34,6 +40,15 @@ function ShowOffers({ offer, options }) {
     return e._id === offer.state;
   }).label;
 
+  let brokerObj = brokers.find((e) => {
+    return e._id === offer.brokerId;
+  });
+  let brokerLabel = null;
+  if (brokerObj !== undefined) {
+    brokerLabel = brokerObj.label;
+  }
+
+  const [broker, setBroker] = useState(brokerLabel);
   const [constructionType, setConstructionTypes] = useState(
     constructionTypeLabel
   );
@@ -61,27 +76,6 @@ function ShowOffers({ offer, options }) {
   const [info, setInfo] = useState(offer.info);
   const [lastCall, setLastCall] = useState(dayjs(new Date(offer.lastCall)));
   const [nextCall, setNextCall] = useState(dayjs(new Date(offer.nextCall)));
-
-  const onChangeAutocomplete = (e, values) => {
-    if (!e) {
-      return;
-    }
-    const id = e.target.id.split("-")[0];
-    switch (id) {
-      case "constructionType":
-        setConstructionTypes(values);
-        break;
-      case "propertyType":
-        setPropertyType(values);
-        break;
-      case "state":
-        setStates(values);
-        break;
-      case "neighborhood":
-        setNeighborhoods(values);
-        break;
-    }
-  };
 
   const onChangeInput = (e) => {
     const { id, value } = e.target;
@@ -145,10 +139,13 @@ function ShowOffers({ offer, options }) {
       propertyTypes,
       propertyType,
       states,
-      state
+      state,
+      brokers,
+      broker
     );
     const updatedOffer = {
       _id: offer._id,
+      brokerId: dropdownsIds.brokerId,
       constructionTypeId: dropdownsIds.constructionTypeId,
       neighborhoodId: dropdownsIds.neighborhoodId,
       propertyTypeId: dropdownsIds.propertyTypeId,
@@ -183,9 +180,21 @@ function ShowOffers({ offer, options }) {
       <h1 style={{ textAlign: "center" }}>Редактиране на оферта</h1>
       <OfferFields
         info={info}
+        brokers={brokers}
+        broker={broker}
         propertyOwnerName={propertyOwnerName}
         hasErrorConstructionType={hasErrorConstructionType}
-        onChangeAutocomplete={onChangeAutocomplete}
+        onChangeAutocomplete={(e, value) => {
+          onChangeAutocomplete(
+            e,
+            value,
+            setConstructionTypes,
+            setPropertyType,
+            setStates,
+            setNeighborhoods,
+            setBroker
+          );
+        }}
         constructionType={constructionType}
         constructionTypes={constructionTypes}
         hasErrorPropertyType={hasErrorPropertyType}
