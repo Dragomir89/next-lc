@@ -67,43 +67,43 @@ function AddOfferPage({ options }) {
     }
   };
 
-  // const onChangeInput = (e) => {
-  //   const { id, value } = e.target;
-  //   switch (id) {
-  //     case "phoneNumber":
-  //       setphoneNumber(value);
-  //       break;
-  //     case "phoneNumber2":
-  //       setPhoneNumber2(value);
-  //       break;
-  //     case "phoneNumber3":
-  //       setPhoneNumber3(value);
-  //       break;
-  //     case "address":
-  //       setAddress(value);
-  //       break;
-  //     case "area":
-  //       setArea(value);
-  //       break;
-  //     case "price":
-  //       setPrice(value);
-  //       break;
-  //     case "floor":
-  //       setFloor(value);
-  //       break;
-  //     case "propertyOwnerName":
-  //       setPropertyOwnerName(value);
-  //       break;
-  //     case "description":
-  //       setDescription(value);
-  //       break;
-  //     case "info":
-  //       setInfo(value);
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // };
+  const onChangeInput = (e) => {
+    const { id, value } = e.target;
+    switch (id) {
+      case "phoneNumber":
+        setphoneNumber(value);
+        break;
+      case "phoneNumber2":
+        setPhoneNumber2(value);
+        break;
+      case "phoneNumber3":
+        setPhoneNumber3(value);
+        break;
+      case "address":
+        setAddress(value);
+        break;
+      case "area":
+        setArea(value);
+        break;
+      case "price":
+        setPrice(value);
+        break;
+      case "floor":
+        setFloor(value);
+        break;
+      case "propertyOwnerName":
+        setPropertyOwnerName(value);
+        break;
+      case "description":
+        setDescription(value);
+        break;
+      case "info":
+        setInfo(value);
+        break;
+      default:
+        break;
+    }
+  };
 
   const resetForm = () => {
     setHasErrorConstructionType(false);
@@ -193,7 +193,7 @@ function AddOfferPage({ options }) {
   return (
     <div style={{ width: "1170px", margin: "0 auto" }}>
       <h1 style={{ textAlign: "center" }}>Добави оферта</h1>
-      {/* <OfferFields
+      <OfferFields
         broker={broker}
         brokers={brokers}
         info={info}
@@ -224,7 +224,7 @@ function AddOfferPage({ options }) {
         setLastCall={setLastCall}
         nextCall={nextCall}
         setNextCall={setNextCall}
-      /> */}
+      />
       <div style={{ padding: "5px" }}>
         <Button
           onClick={submitNewOffer}
