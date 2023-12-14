@@ -137,7 +137,7 @@ export function createQueryStr(
   );
 
   let nextCallISO = "";
-  if (nextCall.$d && nextCall.$d.toString() !== "Invalid Date") {
+  if (nextCall && nextCall.$d && nextCall.$d.toString() !== "Invalid Date") {
     nextCallISO = new Date(nextCall.$d).toISOString().split("T")[0];
   }
   const res = `?rows=${rowsPerPage || ""}&nextCall=${
