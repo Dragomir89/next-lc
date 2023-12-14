@@ -141,7 +141,6 @@ export function createQueryStr(
   }&state=${stateId || ""}&brokerId=${brokerId || ""}&phoneNumber=${
     phoneNumber || ""
   }`;
-  console.log(res);
   return res;
 }
 
@@ -190,8 +189,6 @@ export const creteFindOfferQuery = (query) => {
 // const onChangeInput = (e) => { //// move here
 
 export const getSelectetLabels = (options, query) => {
-  console.log(" getSelectetLabels - query ", query);
-
   const constructionTypeObj = options.constructionTypes.find((el) => {
     return el._id === query.constructionTypeId;
   });

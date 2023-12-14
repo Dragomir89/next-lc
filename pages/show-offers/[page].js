@@ -31,7 +31,6 @@ function ShowOffers(props) {
   const { push } = useRouter();
 
   const { offers, count, query, options, selectedLabels } = props;
-  console.log("selectedLabels = ", selectedLabels);
 
   const { constructionTypes, neighborhoods, propertyTypes, states, brokers } =
     options;

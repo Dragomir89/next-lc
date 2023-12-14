@@ -16,6 +16,7 @@ async function handler(req, res) {
 
     const {
       area,
+      brokerId,
       phoneNumber,
       addedOn,
       description,
@@ -33,6 +34,7 @@ async function handler(req, res) {
     } = req.body;
     const newOffer = await Offer.create({
       area,
+      brokerId,
       phoneNumber,
       phoneNumbers,
       addedOn,

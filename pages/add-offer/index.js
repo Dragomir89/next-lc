@@ -12,7 +12,6 @@ import { CircularProgressContext } from "../../context/CircularProgressContext";
 import { AlertContext } from "../../context/AlertContext";
 
 function AddOfferPage({ options }) {
-  console.log("test commit");
   const [broker, setBroker] = useState(null);
   const [constructionType, setConstructionTypes] = useState(null);
   const [propertyType, setPropertyType] = useState(null);
@@ -115,6 +114,7 @@ function AddOfferPage({ options }) {
     setPropertyType(null);
     setStates(null);
     setNeighborhoods(null);
+    setBroker(null);
     setphoneNumber("");
     setPhoneNumber2("");
     setPhoneNumber3("");
