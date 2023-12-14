@@ -46,7 +46,10 @@ function ShowOffers(props) {
   const [broker, setBroker] = useState(selectedLabels.broker);
 
   const [phoneNumber, setphoneNumber] = useState(selectedLabels.phoneNumber);
-  const [nextCall, setNextCall] = useState(dayjs(new Date()));
+
+  const [nextCall, setNextCall] = useState(
+    dayjs(new Date(selectedLabels.nextCall))
+  );
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(
@@ -148,7 +151,8 @@ function ShowOffers(props) {
       rowsPerPage,
       brokers,
       broker,
-      phoneNumber
+      phoneNumber,
+      nextCall
     );
 
     setPage(0);
@@ -275,14 +279,15 @@ function ShowOffers(props) {
 
 export async function getServerSideProps(context) {
   const { params, req, res, query } = context;
+  const defaultDate = new Date().toISOString().split("T")[0];
 
-  const propsQuery = `&constructionTypeId=${
-    query.constructionTypeId || ""
-  }&neighborhoodId=${query.neighborhoodId || ""}&propertyTypeId=${
-    query.propertyTypeId || ""
-  }&state=${query.state || ""}&brokerId=${query.brokerId || ""}&phoneNumbers=${
-    query.phoneNumber || ""
-  }`;
+  const propsQuery = `&nextCall=${
+    query.nextCall || defaultDate
+  }&constructionTypeId=${query.constructionTypeId || ""}&neighborhoodId=${
+    query.neighborhoodId || ""
+  }&propertyTypeId=${query.propertyTypeId || ""}&state=${
+    query.state || ""
+  }&brokerId=${query.brokerId || ""}&phoneNumbers=${query.phoneNumber || ""}`;
 
   function createQuery() {
     return `?page=${query.page}&rows=${
@@ -296,6 +301,9 @@ export async function getServerSideProps(context) {
 
   const selectedLabels = getSelectetLabels(options, query);
 
+  selectedLabels.nextCall = selectedLabels.nextCall
+    ? selectedLabels.nextCall
+    : defaultDate;
   return { props: { offers, count, query, options, selectedLabels } };
 }
 

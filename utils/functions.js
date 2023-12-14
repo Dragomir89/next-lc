@@ -114,7 +114,8 @@ export function createQueryStr(
   rowsPerPage,
   brokers,
   broker,
-  phoneNumber
+  phoneNumber,
+  nextCall
 ) {
   const {
     constructionTypeId,
@@ -134,13 +135,18 @@ export function createQueryStr(
     brokers,
     broker
   );
-  const res = `?rows=${rowsPerPage || ""}&constructionTypeId=${
-    constructionTypeId || ""
-  }&neighborhoodId=${neighborhoodId || ""}&propertyTypeId=${
-    propertyTypeId || ""
-  }&state=${stateId || ""}&brokerId=${brokerId || ""}&phoneNumber=${
-    phoneNumber || ""
-  }`;
+
+  let nextCallISO = "";
+  if (nextCall.$d && nextCall.$d.toString() !== "Invalid Date") {
+    nextCallISO = new Date(nextCall.$d).toISOString().split("T")[0];
+  }
+  const res = `?rows=${rowsPerPage || ""}&nextCall=${
+    nextCallISO || ""
+  }&constructionTypeId=${constructionTypeId || ""}&neighborhoodId=${
+    neighborhoodId || ""
+  }&propertyTypeId=${propertyTypeId || ""}&state=${stateId || ""}&brokerId=${
+    brokerId || ""
+  }&phoneNumber=${phoneNumber || ""}`;
   return res;
 }
 
@@ -177,10 +183,14 @@ export const onChangeAutocomplete = (
 };
 
 export const creteFindOfferQuery = (query) => {
+  console.log(query);
   const findObj = {};
   for (const [key, value] of Object.entries(query)) {
     if (value && key !== "page" && key !== "rows") {
       findObj[key] = value;
+    }
+    if (key === "nextCall" && value) {
+      findObj["nextCall"] = { $gte: new Date(value) };
     }
   }
   return findObj;
@@ -212,6 +222,7 @@ export const getSelectetLabels = (options, query) => {
     state: stateObj ? stateObj.label : null,
     broker: brokerObj ? brokerObj.label : null,
     phoneNumber: query.phoneNumber ? query.phoneNumber : "",
+    nextCall: query.nextCall ? query.nextCall : "",
   };
 
   return selectedValues;
