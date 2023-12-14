@@ -183,14 +183,13 @@ export const onChangeAutocomplete = (
 };
 
 export const creteFindOfferQuery = (query) => {
-  console.log(query);
   const findObj = {};
   for (const [key, value] of Object.entries(query)) {
     if (value && key !== "page" && key !== "rows") {
       findObj[key] = value;
     }
     if (key === "nextCall" && value) {
-      findObj["nextCall"] = { $gte: new Date(value) };
+      findObj["nextCall"] = { $lte: new Date(value) };
     }
   }
   return findObj;
