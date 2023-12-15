@@ -50,7 +50,6 @@ function ShowOffers(props) {
   if (selectedLabels.nextCall) {
     calendarVall = dayjs(new Date(selectedLabels.nextCall));
   }
-  console.log(calendarVall);
   const [nextCall, setNextCall] = useState(calendarVall);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(
@@ -58,6 +57,16 @@ function ShowOffers(props) {
   );
 
   useEffect(() => {
+    if (selectedLabels.nextCall) {
+      calendarVall = dayjs(new Date(selectedLabels.nextCall));
+    }
+    setNextCall(calendarVall);
+    setConstructionTypes(selectedLabels.constructionType);
+    setPropertyType(selectedLabels.propertyType);
+    setStates(selectedLabels.state);
+    setNeighborhoods(selectedLabels.neighborhood);
+    setBroker(selectedLabels.broker);
+    setphoneNumber(selectedLabels.phoneNumber);
     hideProgressAction();
   }, [offers]);
 
