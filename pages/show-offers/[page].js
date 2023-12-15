@@ -46,11 +46,12 @@ function ShowOffers(props) {
   const [broker, setBroker] = useState(selectedLabels.broker);
 
   const [phoneNumber, setphoneNumber] = useState(selectedLabels.phoneNumber);
-
-  const [nextCall, setNextCall] = useState(
-    dayjs(new Date(selectedLabels.nextCall))
-  );
-
+  let calendarVall = null;
+  if (selectedLabels.nextCall) {
+    calendarVall = dayjs(new Date(selectedLabels.nextCall));
+  }
+  console.log(calendarVall);
+  const [nextCall, setNextCall] = useState(calendarVall);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(
     query.rows ? Number(query.rows) : 10
@@ -212,7 +213,10 @@ function ShowOffers(props) {
               <div style={{ marginBottom: "5px", padding: fieldPadding }}>
                 <DatePicker
                   value={nextCall}
-                  onChange={setNextCall}
+                  onChange={(val) => {
+                    console.log(val);
+                    setNextCall(val);
+                  }}
                   className="test"
                   label={"Следващо Обаждане"}
                   openTo="month"
@@ -284,7 +288,7 @@ function ShowOffers(props) {
 
 export async function getServerSideProps(context) {
   const { params, req, res, query } = context;
-  const defaultDate = ""; //new Date().toISOString().split("T")[0];
+  const defaultDate = "";
 
   const propsQuery = `&nextCall=${
     query.nextCall || defaultDate

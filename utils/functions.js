@@ -1,3 +1,10 @@
+export const transformDateToString = (date) => {
+  const day = new Date(date).getDate();
+  const month = new Date(date).getMonth() + 1;
+  const year = new Date(date).getFullYear();
+  return `${year}-${month}-${day}`;
+};
+
 export function fomatOffersTableData(incommingOffer) {
   return {
     id: incommingOffer._id,
@@ -8,7 +15,7 @@ export function fomatOffersTableData(incommingOffer) {
     area: incommingOffer.area,
     price: incommingOffer.price,
     address: incommingOffer.address,
-    nextCall: new Date(incommingOffer.nextCall).toISOString().split("T")[0],
+    nextCall: transformDateToString(incommingOffer.nextCall),
   };
 }
 
@@ -137,12 +144,13 @@ export function createQueryStr(
     broker
   );
 
-  let nextCallISO = "";
+  let nextCallStr = "";
   if (nextCall && nextCall.$d && nextCall.$d.toString() !== "Invalid Date") {
-    nextCallISO = new Date(nextCall.$d).toISOString().split("T")[0];
+    nextCallStr = transformDateToString(nextCall.$d);
   }
+  console.log(nextCallStr);
   const res = `?rows=${rowsPerPage || ""}&nextCall=${
-    nextCallISO || ""
+    nextCallStr || ""
   }&constructionTypeId=${constructionTypeId || ""}&neighborhoodId=${
     neighborhoodId || ""
   }&propertyTypeId=${propertyTypeId || ""}&state=${stateId || ""}&brokerId=${
