@@ -284,7 +284,7 @@ function ShowOffers(props) {
 
 export async function getServerSideProps(context) {
   const { params, req, res, query } = context;
-  const defaultDate = new Date().toISOString().split("T")[0];
+  const defaultDate = ""; //new Date().toISOString().split("T")[0];
 
   const propsQuery = `&nextCall=${
     query.nextCall || defaultDate

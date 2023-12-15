@@ -18,7 +18,7 @@ async function handler(req, res) {
         offersPerPage * (page - 1) < 0 ? 0 : offersPerPage * (page - 1);
       return skipVal;
     }
-
+    console.log("query = ", req.query);
     const findObj = creteFindOfferQuery(req.query);
 
     const count = await Offer.countDocuments(findObj);
