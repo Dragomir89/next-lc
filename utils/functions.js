@@ -8,6 +8,7 @@ export function fomatOffersTableData(incommingOffer) {
     area: incommingOffer.area,
     price: incommingOffer.price,
     address: incommingOffer.address,
+    nextCall: new Date(incommingOffer.nextCall).toISOString().split("T")[0],
   };
 }
 

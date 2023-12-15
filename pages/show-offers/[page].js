@@ -66,20 +66,20 @@ function ShowOffers(props) {
     {
       id: "constructionType",
       label: "Вид строителство",
-      minWidth: 70,
+      minWidth: 10,
       align: "left",
     },
     {
       id: "neighborhood",
 
       label: "Квартал",
-      minWidth: 70,
+      minWidth: 10,
       align: "left",
     },
     {
       id: "area",
       label: "Площ \u00a0(кв\u00b2)",
-      minWidth: 70,
+      minWidth: 10,
       align: "right",
       format: (value) => {
         return value + " кв";
@@ -88,7 +88,7 @@ function ShowOffers(props) {
     {
       id: "price",
       label: "Цена (евро)",
-      minWidth: 70,
+      minWidth: 10,
       align: "right",
       format: (value) => {
         return value + " \u20AC";
@@ -97,8 +97,13 @@ function ShowOffers(props) {
     {
       id: "address",
       label: "Адрес",
-      minWidth: 170,
-
+      minWidth: 70,
+      align: "right",
+    },
+    {
+      id: "nextCall",
+      label: "Следващо обаждане",
+      minWidth: 10,
       align: "right",
     },
   ];

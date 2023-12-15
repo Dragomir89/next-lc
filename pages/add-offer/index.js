@@ -177,7 +177,7 @@ function AddOfferPage({ options }) {
       description,
       info,
       lastCall,
-      nextCall,
+      nextCall: new Date(nextCall.$d).toISOString().split("T")[0],
     })
       .then((res) => {
         hideProgressAction();
