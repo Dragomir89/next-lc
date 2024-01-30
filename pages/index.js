@@ -4,16 +4,9 @@ import Link from "next/link";
 import { Fragment } from "react";
 
 function HomePage(props) {
-  const { test } = props;
-
   return (
     <Fragment>
-      <h1>test</h1>
-      <Link href="./add-options">Добави опции</Link>
-      <Link href="./test-page">
-        <Button>test</Button>
-      </Link>
-      <h1>HomePage</h1>
+      <h1>LC Brokers</h1>
     </Fragment>
   );
 }
