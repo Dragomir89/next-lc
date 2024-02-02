@@ -169,7 +169,7 @@ function ShowOffers(props) {
       phoneNumber,
       nextCall
     );
-
+    console.log(query);
     setPage(0);
     push(`/show-offers/${1}${query}`);
     // hideProgressAction();

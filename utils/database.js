@@ -11,12 +11,12 @@ export const connectToDB = async () => {
   }
 
   try {
-    await mongoose.connect(
-      "mongodb+srv://dragomir:dragomirprod@imoti-bg-prod.vzwei.mongodb.net/imoti-bg-prod?retryWrites=true&w=majority"
-    );
     // await mongoose.connect(
-    //   "mongodb+srv://drashotest:test@lc-brokers.h59eb.azure.mongodb.net/"
+    //   "mongodb+srv://dragomir:dragomirprod@imoti-bg-prod.vzwei.mongodb.net/imoti-bg-prod?retryWrites=true&w=majority"
     // );
+    await mongoose.connect(
+      "mongodb+srv://drashotest:test@lc-brokers.h59eb.azure.mongodb.net/"
+    );
     console.log(".. connected to DB ..");
     isConnected = true;
   } catch (error) {
